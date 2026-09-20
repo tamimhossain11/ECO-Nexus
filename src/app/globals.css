@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --bg: 247 245 251;
+    --fg: 20 15 34;
+    --muted: 85 80 107;
+    --glass: 255 255 255;
+    --glass-opacity: 0.55;
+    --glass-border: 255 255 255;
+    --glass-border-opacity: 0.68;
+    --accent: 124 58 237;
+    --accent-2: 8 145 178;
+    --ring: 124 58 237;
+    --shadow: 30 18 60;
+    /* text that sits on top of an accent-filled surface */
+    --on-accent: 255 255 255;
+
+    /* chart tokens — validated against the light glass surface (#fbfafd).
+       The series hue is a step of the brand violet; status colours are the
+       reserved set and are never themed. */
+    --series: 124 58 237;
+    --grid: 225 224 217;
+    --axis: 195 194 183;
+    --status-good: 12 163 12;
+    --status-warning: 250 178 25;
+    --status-serious: 236 131 90;
+    --status-critical: 208 59 59;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --bg: 8 6 15;
+    --fg: 236 233 245;
+    --muted: 162 154 184;
+    --glass: 26 20 46;
+    --glass-opacity: 0.46;
+    --glass-border: 196 181 253;
+    --glass-border-opacity: 0.15;
+    --accent: 167 139 250;
+    --accent-2: 34 211 238;
+    --ring: 167 139 250;
+    --shadow: 0 0 0;
+    --on-accent: 15 9 30;
+
+    /* chart tokens — dark steps are selected for the dark glass surface
+       (#100c1d), not an automatic flip of the light values. */
+    --series: 139 92 246;
+    --grid: 44 44 42;
+    --axis: 56 56 53;
+    --status-good: 12 163 12;
+    --status-warning: 250 178 25;
+    --status-serious: 236 131 90;
+    --status-critical: 208 59 59;
+  }
+
+  * {
+    @apply border-0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    @apply font-sans antialiased;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.28);
+    color: rgb(var(--fg));
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--accent) / 0.45);
+    border-radius: 999px;
+    border: 3px solid rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--accent) / 0.7);
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgb(var(--glass) / var(--glass-opacity));
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgb(var(--glass-border) / var(--glass-border-opacity));
+    box-shadow:
+      0 8px 32px -8px rgb(var(--shadow) / 0.18),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.12);
+  }
+
+  .glass-strong {
+    background: rgb(var(--glass) / calc(var(--glass-opacity) + 0.22));
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgb(var(--glass-border) / calc(var(--glass-border-opacity) + 0.1));
+    box-shadow:
+      0 20px 60px -20px rgb(var(--shadow) / 0.35),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.16);
+  }
+
+  .glass-card {
+    @apply glass rounded-3xl;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease,
+      border-color 0.45s ease;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--accent) / 0.55),
+      transparent 38%,
+      transparent 62%,
+      rgb(var(--accent-2) / 0.45)
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+  }
+
+  .glass-card:hover::before {
+    opacity: 1;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 70px -24px rgb(var(--accent) / 0.35);
+  }
+
+  .text-muted {
+    color: rgb(var(--muted));
+  }
+
+  .gradient-text {
+    background: linear-gradient(
+      100deg,
+      rgb(var(--accent)),
+      rgb(var(--accent-2)),
+      rgb(var(--accent))
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 text-sm font-semibold tracking-wide;
+    color: rgb(var(--on-accent));
+    background: linear-gradient(120deg, rgb(var(--accent)), rgb(var(--accent-2)));
+    box-shadow: 0 12px 34px -12px rgb(var(--accent) / 0.9);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 18px 46px -12px rgb(var(--accent) / 1);
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 20%, rgb(255 255 255 / 0.55), transparent 80%);
+    transform: translateX(-120%);
+    transition: transform 0.75s ease;
+  }
+
+  .btn-primary:hover::after {
+    transform: translateX(120%);
+  }
+
+  .btn-ghost {
+    @apply glass inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold tracking-wide;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease,
+      background 0.3s ease;
+  }
+
+  .btn-ghost:hover {
+    transform: translateY(-2px) scale(1.02);
+    border-color: rgb(var(--accent) / 0.6);
+  }
+
+  .chip {
+    @apply glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium tracking-wide;
+  }
+
+  .soft-wash {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--accent) / 0.10), transparent 70%),
+      radial-gradient(ellipse 70% 50% at 100% 20%, rgb(var(--accent-2) / 0.08), transparent 70%);
+  }
+
+  .section {
+    @apply relative mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 md:py-28;
+  }
+
+  .eyebrow {
+    @apply mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em];
+    background: rgb(var(--accent) / 0.12);
+    color: rgb(var(--accent));
+    border: 1px solid rgb(var(--accent) / 0.25);
+  }
+
+  .h1 {
+    @apply font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl;
+  }
+
+  .h2 {
+    @apply font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl;
+  }
+
+  .h3 {
+    @apply font-display text-xl font-semibold tracking-tight sm:text-2xl;
+  }
+
+  .lead {
+    @apply text-base leading-relaxed text-muted sm:text-lg;
+  }
+
+  .field {
+    @apply glass w-full rounded-2xl px-4 py-3 text-sm outline-none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  }
+
+  .field:focus {
+    border-color: rgb(var(--ring) / 0.7);
+    box-shadow: 0 0 0 4px rgb(var(--ring) / 0.16);
+  }
+
+  .field::placeholder {
+    color: rgb(var(--muted) / 0.75);
+  }
+
+  .noise::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  }
+  .perspective {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
