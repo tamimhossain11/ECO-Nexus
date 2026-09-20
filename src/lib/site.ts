@@ -133,6 +133,7 @@ export const team: Member[] = [
     school: 'Adamjee Cantonment Public School',
     bio: '',
     initials: 'RT',
+    photo: '/raiyan.jpeg',
     tags: [],
   },
 ];
